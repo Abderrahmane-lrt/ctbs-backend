@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('showtime_id')->constrained('showtimes')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained("users")->cascadeOnDelete();
             $table->string('ticket_code')->unique();
-            $table->boolean('is_used')->default('false');
+            $table->boolean('is_used')->default(false);
             $table->timestamps();
         });
     }
