@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
 
         Showtime::create([
             'movie_id' => $movie->id,
-            'room_name' => 'Salle IMAX',
+            'room_name' => 'Room 1',
             'start_time' => '2026-07-11 21:00:00',
             'capacity' => 2,
             'price' => 49.99
