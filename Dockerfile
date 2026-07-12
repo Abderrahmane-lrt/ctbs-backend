@@ -25,4 +25,4 @@ USER www-data
 
 EXPOSE 80
 
-CMD php-fpm -D && nginx -g "daemon off;"
+CMD php-fpm -D && nginx -g "daemon off; pid /tmp/nginx.pid;"
