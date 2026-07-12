@@ -20,23 +20,31 @@ class User extends Authenticatable
 
     protected $fillable = ['name', 'email', 'password', 'role'];
 
+    public function cinemas()
+    {
+        return $this->hasMany(Cinema::class, 'owner_id');
+    }
 
-    public function tickets(){
+    public function tickets()
+    {
         return $this->hasMany(Ticket::class);
     }
 
-
-    public function isAdmin(){
+    public function isAdmin()
+    {
         return $this->role === 'admin';
     }
 
-    public function isAgent(){
+    public function isAgent()
+    {
         return $this->role === 'agent';
     }
 
-    public function isClient(){
+    public function isClient()
+    {
         return $this->role === 'client';
     }
+
     /**
      * Get the attributes that should be cast.
      *
