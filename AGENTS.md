@@ -2,11 +2,11 @@
 
 ## Project
 
-Cinema Ticket Booking System — REST API for browsing movies, booking tickets, and validating entries. No frontend; API-only backend.
+Cinema Ticket Booking System — REST API for browsing movies, cinemas, showtimes, and booking tickets. No frontend; API-only backend.
 
 ## Stack
 
-Laravel 13 · PHP 8.5 · Sanctum (token auth) · MySQL (prod) / SQLite (dev default) · Pest 4 · Pint · Tailwind v4 · Vite
+Laravel 13 · PHP 8.3+ · Sanctum (token auth) · MySQL (prod) / SQLite (dev default) · Pest 4 · Pint · Tailwind v4 · Vite
 
 ## Commands
 
@@ -26,9 +26,10 @@ Laravel 13 · PHP 8.5 · Sanctum (token auth) · MySQL (prod) / SQLite (dev defa
 
 ## Domain Model
 
-- **User** — roles: `admin`, `agent`, `client` (string enum in DB, not a PHP enum). Uses Laravel 13 `#[Fillable]`/`#[Hidden]` attributes plus a redundant `$fillable` array.
+- **User** — roles: `admin`, `agent`, `client` (string column, not a PHP enum). Uses Laravel 13 `#[Fillable]`/`#[Hidden]` attributes plus a redundant `$fillable` array.
+- **Cinema** — belongs to User (`owner_id`); stores name, city, address
 - **Movie** — has many Showtimes
-- **Showtime** — belongs to Movie; stores room, city, location, capacity, start_time, price
+- **Showtime** — belongs to Movie + Cinema; stores room_name, capacity, start_time, price
 - **Ticket** — belongs to User + Showtime; `ticket_code` is a UUID (`Str::uuid()`)
 
 ## Auth & Authorization
@@ -40,20 +41,18 @@ Laravel 13 · PHP 8.5 · Sanctum (token auth) · MySQL (prod) / SQLite (dev defa
 
 ## API Routes (`/api`)
 
-- Public: `GET /movies`, `GET /movies/{movie}`, `POST /register`, `POST /login`
+- Public: `GET /movies`, `GET /movies/{movie}`, `GET /showtimes`, `GET /showtimes/{showtime}`, `POST /register`, `POST /login`
 - Auth required: `POST /tickets/buy`, `GET /my-tickets`, `POST /logout`
 - Agent/Admin: `POST /tickets/validate/{code}`
-- Admin only: `POST /movies/create`, `PUT /movies/{movie}`, `DELETE /movies/{movie}`
+- Admin only: `POST /movies/create`, `PUT /movies/{movie}`, `DELETE /movies/{movie}`, `POST /showtimes`, `PUT /showtimes/{showtime}`, `DELETE /showtimes/{showtime}`
 - No API versioning — routes are flat.
 - No Eloquent API Resources — controllers return raw models/arrays.
 
 ## Gotchas
 
-- `ShowtimeController` exists but is **empty** (stub) and **not routed**.
-- `Ticket.fillable` includes `validated_at` which doesn't exist in the schema — ignore or fix.
-- `MovieController@store` validates `duration` but the model fillable is `duration_minutes` — field name mismatch.
-- Only `UserFactory` exists. No factories for Movie, Showtime, or Ticket.
+- `MovieController@store` validates `duration` but the model fillable is `duration_minutes` — field name mismatch. `MovieController@update` correctly uses `duration_minutes`.
 - No CI workflow configured (no `.github/` directory).
+- Factories exist for User, Movie, Cinema, and Showtime (no Ticket factory).
 
 ## Conventions
 
@@ -65,7 +64,7 @@ Laravel 13 · PHP 8.5 · Sanctum (token auth) · MySQL (prod) / SQLite (dev defa
 
 ## Docker Environment
 
-- Services: `app` (PHP 8.5-fpm), `web` (Nginx on port 8000), `db` (MySQL 8.0 on port 3306).
+- Services: `app` (PHP-fpm), `web` (Nginx on port 8000), `db` (MySQL 8.0 on port 3306).
 - `.env` must use MySQL settings for Docker (uncomment the Docker block in `.env.example`).
 - DB credentials: host=`db`, database=`ctbs_db`, user=`root`, password=`secret`.
 
