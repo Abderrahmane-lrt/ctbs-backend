@@ -62,3 +62,22 @@ Laravel 13 · PHP 8.5 · Sanctum (token auth) · MySQL (prod) / SQLite (dev defa
 - Run Pint on modified PHP before finalizing.
 - Be concise in explanations.
 - Only create docs if explicitly requested.
+
+## Docker Environment
+
+- Services: `app` (PHP 8.5-fpm), `web` (Nginx on port 8000), `db` (MySQL 8.0 on port 3306).
+- `.env` must use MySQL settings for Docker (uncomment the Docker block in `.env.example`).
+- DB credentials: host=`db`, database=`ctbs_db`, user=`root`, password=`secret`.
+
+### Commands
+
+```bash
+docker compose up -d                    # Start all containers
+docker compose exec app bash            # Enter the app container
+docker compose exec app composer install
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate --force
+docker compose exec app php artisan db:seed
+docker compose down                     # Stop containers
+docker compose down -v                  # Stop and remove volumes
+```
